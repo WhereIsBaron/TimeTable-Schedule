@@ -49,7 +49,7 @@ However, you're more than welcome to:
 - ❌ Not licensed for commercial or open-source adaptation
 
 🔒 **All rights reserved.**  
-If you'd like to use any part of this project, [contact me first](mailto:youremail@example.com).
+If you'd like to use any part of this project, [contact me first](mailto:youremail@example.com). (Pending)
 
 ---
 
