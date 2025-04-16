@@ -1,33 +1,27 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Register</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+@extends('layouts.app')
+
+@section('title', 'Register')
+
+@section('styles')
     <style>
-        body.dark-mode {
-            background-color: #121212;
-            color: #e0e0e0;
-        }
-        .dark-mode .card, .dark-mode .navbar {
+        .dark-mode .card {
             background-color: #1e1e1e;
             color: #e0e0e0;
         }
+
         .dark-mode .form-control {
             background-color: #2c2c2c;
             color: #e0e0e0;
         }
     </style>
-</head>
-<body>
-<div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Register</h2>
-        <button id="themeToggle" class="btn btn-sm btn-outline-light">🌙 Toggle Dark Mode</button>
-    </div>
+@endsection
 
+@section('content')
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <div class="card p-4">
+            <div class="card p-4 shadow-sm">
+                <h3 class="mb-3">Register</h3>
+
                 @if ($errors->any())
                     <div class="alert alert-danger">
                         <ul class="mb-0">
@@ -42,64 +36,77 @@
                     @csrf
 
                     <div class="mb-3">
-                        <label class="form-label">Full Name</label>
-                        <input type="text" name="full_name" value="{{ old('full_name') }}" class="form-control @error('full_name') is-invalid @enderror">
+                        <label for="full_name" class="form-label">Full Name</label>
+                        <input type="text" class="form-control @error('full_name') is-invalid @enderror" id="full_name" name="full_name" value="{{ old('full_name') }}" required>
                         @error('full_name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input type="email" name="email" value="{{ old('email') }}" class="form-control @error('email') is-invalid @enderror">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" required>
                         @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Student ID</label>
-                        <input type="text" name="student_id" value="{{ old('student_id') }}" class="form-control @error('student_id') is-invalid @enderror">
+                        <label for="student_id" class="form-label">Student ID</label>
+                        <input type="text" class="form-control @error('student_id') is-invalid @enderror" id="student_id" name="student_id" value="{{ old('student_id') }}" required>
                         @error('student_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Class Code</label>
-                        <input type="text" name="class_code" value="{{ old('class_code') }}" class="form-control @error('class_code') is-invalid @enderror">
+                        <label for="class_code" class="form-label">Class Code</label>
+                        <input type="text" class="form-control @error('class_code') is-invalid @enderror" id="class_code" name="class_code" value="{{ old('class_code') }}" required>
                         @error('class_code') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Password</label>
+                        <label for="password" class="form-label">Password</label>
                         <div class="input-group">
-                            <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" id="password">
+                            <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" required>
                             <button type="button" class="btn btn-outline-secondary" onclick="togglePassword()">👁️</button>
                         </div>
                         @error('password') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Confirm Password</label>
-                        <input type="password" name="password_confirmation" class="form-control">
+                        <label for="password_confirmation" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100">Register</button>
-                    <a href="{{ url('/login') }}" class="btn btn-link">Already have an account?</a>
+                    <a href="{{ url('/login') }}" class="btn btn-link w-100">Already have an account? Login</a>
                 </form>
             </div>
         </div>
     </div>
-</div>
+@endsection
 
+@section('scripts')
 <script>
-    function togglePassword() {
-        const pass = document.getElementById('password');
-        pass.type = pass.type === 'password' ? 'text' : 'password';
-    }
     document.addEventListener("DOMContentLoaded", function () {
-        const darkMode = localStorage.getItem('theme') === 'dark';
-        if (darkMode) document.body.classList.add('dark-mode');
-        document.getElementById('themeToggle').addEventListener('click', function () {
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-        });
+        const isDark = localStorage.getItem('theme') === 'dark';
+        const body = document.body;
+        const toggleBtn = document.getElementById('themeToggle');
+
+        if (isDark) body.classList.add('dark-mode');
+
+        const updateIcon = () => {
+            if (toggleBtn) {
+                toggleBtn.textContent = body.classList.contains('dark-mode') ? '☀️' : '🌙';
+            }
+        };
+
+        updateIcon(); // Set icon on load
+
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function () {
+                body.classList.toggle('dark-mode');
+                const theme = body.classList.contains('dark-mode') ? 'dark' : 'light';
+                localStorage.setItem('theme', theme);
+                updateIcon(); // Update icon after toggle
+            });
+        }
     });
 </script>
-</body>
-</html>
+
+@endsection

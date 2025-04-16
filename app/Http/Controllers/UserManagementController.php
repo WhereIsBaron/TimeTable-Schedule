@@ -20,7 +20,7 @@ class UserManagementController extends Controller
             return $user->class_code ?? 'Unassigned';
         });
 
-        return view('admin.users.index', compact('groupedUsers'));
+        return view('admin.users.usermanagement', compact('groupedUsers'));
     }
 
     public function create()

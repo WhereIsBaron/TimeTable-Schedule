@@ -1,33 +1,27 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Login</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+@extends('layouts.app')
+
+@section('title', 'Login')
+
+@section('styles')
     <style>
-        body.dark-mode {
-            background-color: #121212;
-            color: #e0e0e0;
-        }
         .dark-mode .card {
             background-color: #1e1e1e;
             color: #e0e0e0;
         }
+
         .dark-mode .form-control {
             background-color: #2c2c2c;
             color: #e0e0e0;
         }
     </style>
-</head>
-<body>
-<div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Login</h2>
-        <button id="themeToggle" class="btn btn-sm btn-outline-light">Toggle Dark Mode</button>
-    </div>
+@endsection
 
+@section('content')
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card p-4 shadow-sm">
+                <h3 class="mb-3">Login</h3>
+
                 @if ($errors->any())
                     <div class="alert alert-danger">
                         <ul class="mb-0">
@@ -62,35 +56,39 @@
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100">Login</button>
-                    <a href="{{ url('/register') }}" class="btn btn-link w-100">Register</a>
+                    <a href="{{ url('/register') }}" class="btn btn-link w-100">Don't have an account? Register</a>
                 </form>
             </div>
         </div>
     </div>
-</div>
+@endsection
 
-<!-- Scripts -->
+@section('scripts')
 <script>
-    function togglePassword() {
-        const pass = document.getElementById('password');
-        pass.type = pass.type === 'password' ? 'text' : 'password';
-    }
-
     document.addEventListener("DOMContentLoaded", function () {
-        const darkMode = localStorage.getItem('theme') === 'dark';
-        if (darkMode) document.body.classList.add('dark-mode');
+        const isDark = localStorage.getItem('theme') === 'dark';
+        const body = document.body;
+        const toggleBtn = document.getElementById('themeToggle');
 
-        document.getElementById('themeToggle').addEventListener('click', function () {
-            document.body.classList.toggle('dark-mode');
-            const theme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
-            localStorage.setItem('theme', theme);
-        });
+        if (isDark) body.classList.add('dark-mode');
 
-        setTimeout(() => {
-            const successMessage = document.getElementById('success-message');
-            if (successMessage) successMessage.style.display = 'none';
-        }, 4000);
+        const updateIcon = () => {
+            if (toggleBtn) {
+                toggleBtn.textContent = body.classList.contains('dark-mode') ? '☀️' : '🌙';
+            }
+        };
+
+        updateIcon(); // Set icon on load
+
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function () {
+                body.classList.toggle('dark-mode');
+                const theme = body.classList.contains('dark-mode') ? 'dark' : 'light';
+                localStorage.setItem('theme', theme);
+                updateIcon(); // Update icon after toggle
+            });
+        }
     });
 </script>
-</body>
-</html>
+
+@endsection

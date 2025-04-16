@@ -1,83 +1,141 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Admin Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+@extends('layouts.app')
+
+@section('title', 'Admin Dashboard')
+
+@section('styles')
     <style>
-        body.dark-mode {
+        .dashboard-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .dashboard-cards .card {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .dark-mode {
             background-color: #121212;
             color: #e0e0e0;
         }
 
-        .dark-mode .card, .dark-mode .navbar {
+        .dark-mode .card,
+        .dark-mode .navbar {
             background-color: #1e1e1e;
             color: #e0e0e0;
         }
 
-        .dark-mode .form-control,
-        .dark-mode .btn-primary,
-        .dark-mode .btn-danger {
+        .dark-mode .form-control {
             background-color: #2c2c2c;
             color: #e0e0e0;
-            border: 1px solid #444;
         }
 
-        .dark-mode .btn-outline-light {
-            color: #e0e0e0;
-            border-color: #e0e0e0;
+        /* Ensure buttons do not change in dark mode */
+        body.dark-mode .btn {
+            background-color: unset;
+            color: unset;
+            border-color: unset;
         }
 
-        .dark-mode .btn-outline-light:hover {
-            background-color: #e0e0e0;
-            color: #121212;
+        body.dark-mode .btn-primary {
+            background-color: #007bff;
+            color: #fff;
+            border-color: #007bff;
         }
 
-        .theme-toggle-btn {
-            position: absolute;
-            top: 1.25rem;
-            right: 1.25rem;
+        body.dark-mode .btn-danger {
+            background-color: #dc3545;
+            color: #fff;
+            border-color: #dc3545;
+        }
+
+        body.dark-mode .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            border-radius: 0.2rem;
+        }
+
+        /* Ensure text is readable in dark mode */
+        body.dark-mode .card-body {
+            color: #e0e0e0 !important;
+        }
+
+        body.dark-mode .card-title {
+            color: #e0e0e0 !important;
+        }
+
+        body.dark-mode .text-muted {
+            color: #bbb !important;
         }
     </style>
-</head>
-<body>
-    <!-- Dark Mode Toggle Button -->
-    <button id="themeToggle" class="btn btn-sm btn-outline-light theme-toggle-btn">🌙 Toggle Theme</button>
+@endsection
 
-    <div class="container mt-5">
-        <h1>Admin Dashboard</h1>
-        
-        @if (session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
+@section('content')
+    <h1 class="mb-4">Admin Dashboard</h1>
 
-        <div class="card shadow mt-3">
-            <div class="card-body">
-                <h5>Welcome, {{ auth()->user()->full_name }}</h5>
-                <p>You are logged in as an <strong>Administrator</strong>.</p>
+    @if (session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
 
-                <div class="mt-3 d-flex gap-2">
-                    <a href="{{ route('admin.users.index') }}" class="btn btn-primary">Manage Users</a>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="btn btn-danger">Logout</button>
-                    </form>
-                </div>
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <h5>Welcome, {{ auth()->user()->full_name }}</h5>
+            <p>You are logged in as an <strong>Administrator</strong>.</p>
+
+            <div class="mt-3 d-flex gap-2">
+                <a href="{{ route('admin.users.index') }}" class="btn btn-primary">Manage Users</a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-danger">Logout</button>
+                </form>
             </div>
         </div>
     </div>
 
-    <!-- Dark Mode Script -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const darkMode = localStorage.getItem('theme') === 'dark';
-            if (darkMode) document.body.classList.add('dark-mode');
+    <div class="dashboard-cards">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="card-title text-muted">System Summary</h6>
+                <p class="mb-1"><strong>Users:</strong> {{ \App\Models\User::count() }}</p>
+                <p><strong>Admins:</strong> {{ \App\Models\User::where('is_admin', true)->count() }}</p>
+            </div>
+        </div>
 
-            document.getElementById('themeToggle').addEventListener('click', function () {
-                document.body.classList.toggle('dark-mode');
-                const newTheme = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
-                localStorage.setItem('theme', newTheme);
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h6 class="card-title text-muted">Recent Activity</h6>
+                <p class="mb-1">📌 Feature rollout on {{ now()->subDays(1)->format('M d, Y') }}</p>
+                <p class="mb-0">🗂️ Updated layout system</p>
+            </div>
+        </div>
+    </div>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const isDark = localStorage.getItem('theme') === 'dark';
+        const body = document.body;
+        const toggleBtn = document.getElementById('themeToggle');
+
+        if (isDark) body.classList.add('dark-mode');
+
+        const updateIcon = () => {
+            if (toggleBtn) {
+                toggleBtn.textContent = body.classList.contains('dark-mode') ? '☀️' : '🌙';
+            }
+        };
+
+        updateIcon(); // Set icon on load
+
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function () {
+                body.classList.toggle('dark-mode');
+                const theme = body.classList.contains('dark-mode') ? 'dark' : 'light';
+                localStorage.setItem('theme', theme);
+                updateIcon(); // Update icon after toggle
             });
-        });
-    </script>
-</body>
-</html>
+        }
+    });
+</script>
+
+@endsection
