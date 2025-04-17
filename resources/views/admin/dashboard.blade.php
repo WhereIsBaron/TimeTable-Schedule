@@ -31,7 +31,6 @@
             color: #e0e0e0;
         }
 
-        /* Ensure buttons do not change in dark mode */
         body.dark-mode .btn {
             background-color: unset;
             color: unset;
@@ -57,7 +56,6 @@
             border-radius: 0.2rem;
         }
 
-        /* Ensure text is readable in dark mode */
         body.dark-mode .card-body {
             color: #e0e0e0 !important;
         }
@@ -84,8 +82,10 @@
             <h5>Welcome, {{ auth()->user()->full_name }}</h5>
             <p>You are logged in as an <strong>Administrator</strong>.</p>
 
-            <div class="mt-3 d-flex gap-2">
-                <a href="{{ route('admin.users.index') }}" class="btn btn-primary">Manage Users</a>
+            <div class="mt-3 d-flex gap-2 flex-wrap">
+                <a href="{{ route('admin.users.index') }}" class="btn btn-primary">👥 Manage Users</a>
+                <a href="{{ route('admin.timetables.index') }}" class="btn btn-primary">📅 Manage Schedule</a>
+                <a href="{{ route('admin.master_timetables.index') }}" class="btn btn-primary">📘 Master Timetables</a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="btn btn-danger">Logout</button>
@@ -111,31 +111,31 @@
             </div>
         </div>
     </div>
+
     <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const isDark = localStorage.getItem('theme') === 'dark';
-        const body = document.body;
-        const toggleBtn = document.getElementById('themeToggle');
+        document.addEventListener("DOMContentLoaded", function () {
+            const isDark = localStorage.getItem('theme') === 'dark';
+            const body = document.body;
+            const toggleBtn = document.getElementById('themeToggle');
 
-        if (isDark) body.classList.add('dark-mode');
+            if (isDark) body.classList.add('dark-mode');
 
-        const updateIcon = () => {
+            const updateIcon = () => {
+                if (toggleBtn) {
+                    toggleBtn.textContent = body.classList.contains('dark-mode') ? '☀️' : '🌙';
+                }
+            };
+
+            updateIcon();
+
             if (toggleBtn) {
-                toggleBtn.textContent = body.classList.contains('dark-mode') ? '☀️' : '🌙';
+                toggleBtn.addEventListener('click', function () {
+                    body.classList.toggle('dark-mode');
+                    const theme = body.classList.contains('dark-mode') ? 'dark' : 'light';
+                    localStorage.setItem('theme', theme);
+                    updateIcon();
+                });
             }
-        };
-
-        updateIcon(); // Set icon on load
-
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', function () {
-                body.classList.toggle('dark-mode');
-                const theme = body.classList.contains('dark-mode') ? 'dark' : 'light';
-                localStorage.setItem('theme', theme);
-                updateIcon(); // Update icon after toggle
-            });
-        }
-    });
-</script>
-
+        });
+    </script>
 @endsection

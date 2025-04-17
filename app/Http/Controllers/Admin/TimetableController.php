@@ -12,7 +12,7 @@ class TimetableController extends Controller
     public function index()
     {
         $timetables = Timetable::orderBy('class_code')->paginate(10);
-        return view('admin.timetables.index', compact('timetables'));
+        return view('admin.timetables.TimetableManagement', compact('timetables'));
     }
 
     public function create()
@@ -33,7 +33,7 @@ class TimetableController extends Controller
 
         Timetable::create($request->all());
 
-        return redirect()->route('timetables.index')->with('success', 'Timetable created successfully.');
+        return redirect()->route('admin.timetables.index')->with('success', 'Timetable created successfully.');
     }
 
     public function edit(Timetable $timetable)
@@ -54,19 +54,19 @@ class TimetableController extends Controller
 
         $timetable->update($request->all());
 
-        return redirect()->route('timetables.index')->with('success', 'Timetable updated successfully.');
+        return redirect()->route('admin.timetables.index')->with('success', 'Timetable updated successfully.');
     }
 
     public function destroy(Timetable $timetable)
     {
         $timetable->delete();
 
-        return redirect()->route('timetables.index')->with('success', 'Timetable deleted successfully.');
+        return redirect()->route('admin.timetables.index')->with('success', 'Timetable deleted successfully.');
     }
 
     public function exportCsv()
     {
-        $timetables = Timetable::all();
+        $timetables = Timetable::orderBy('class_code')->get();
         $filename = "timetables.csv";
 
         $headers = [

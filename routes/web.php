@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserManagementController;
 use App\Http\Controllers\Admin\TimetableController;
+use App\Http\Controllers\Admin\MasterTimetableController; // ✅ Add this
+use App\Http\Middleware\AdminMiddleware; // ✅ Import middleware class
 
 // Show Authentication Forms
 Route::get('/register', function () {
@@ -38,6 +40,19 @@ Route::middleware(['auth'])->group(function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
 
+    // Admin-only Routes
+    Route::middleware([AdminMiddleware::class])
+    ->prefix('admin')
+    ->as('admin.')
+    ->group(function () {
+        // ✅ Timetables
+        Route::resource('timetables', TimetableController::class);
+        Route::get('timetables-export', [TimetableController::class, 'exportCsv'])->name('timetables.export');
+
+        // ✅ Master Timetables
+        Route::resource('master_timetables', MasterTimetableController::class);
+    });
+
     // Admin: Manage Users
     Route::get('/admin/users', [UserManagementController::class, 'index'])->name('admin.users.index');
     Route::get('/admin/users/create', [UserManagementController::class, 'create'])->name('admin.users.create');
@@ -45,12 +60,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/users/{id}/edit', [UserManagementController::class, 'edit'])->name('admin.users.edit');
     Route::put('/admin/users/{id}', [UserManagementController::class, 'update'])->name('admin.users.update');
     Route::delete('/admin/users/{id}', [UserManagementController::class, 'destroy'])->name('admin.users.destroy');
-
-    // Admin: Manage Timetables
-    Route::middleware('admin')->prefix('admin')->group(function () {
-        Route::resource('timetables', TimetableController::class);
-        Route::get('timetables-export', [TimetableController::class, 'exportCsv'])->name('timetables.export'); // ✅ Add this line
-    });
 
     // User Dashboard
     Route::get('/user/dashboard', function () {
@@ -60,3 +69,8 @@ Route::middleware(['auth'])->group(function () {
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
+
+// ✅ Test Route for Admin Middleware
+Route::get('/test-admin-middleware', function () {
+    return "✔️ You passed the admin middleware.";
+})->middleware(['web', 'auth', AdminMiddleware::class]);

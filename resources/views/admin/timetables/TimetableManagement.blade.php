@@ -35,8 +35,9 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>📅 Timetable Management</h1>
         <div class="d-flex gap-2">
-            <a href="{{ route('timetables.create') }}" class="btn btn-success">➕ Add Entry</a>
-            <a href="{{ route('timetables.export') }}" class="btn btn-outline-secondary">⬇️ Export CSV</a>
+            <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-primary">🏠 Back to Dashboard</a>
+            <a href="{{ route('admin.timetables.create') }}" class="btn btn-success">➕ Add Entry</a>
+            <a href="{{ route('admin.timetables.export') }}" class="btn btn-outline-secondary">⬇️ Export CSV</a>
         </div>
     </div>
 
@@ -69,8 +70,8 @@
                         <td>{{ $timetable->day_of_week }}</td>
                         <td>{{ $timetable->start_time }} - {{ $timetable->end_time }}</td>
                         <td>
-                            <a href="{{ route('timetables.edit', $timetable->id) }}" class="btn btn-sm btn-primary">✏️ Edit</a>
-                            <form action="{{ route('timetables.destroy', $timetable->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this entry?');">
+                            <a href="{{ route('admin.timetables.edit', $timetable->id) }}" class="btn btn-sm btn-primary">✏️ Edit</a>
+                            <form action="{{ route('admin.timetables.destroy', $timetable->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this entry?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-danger">🗑️ Delete</button>
@@ -97,6 +98,31 @@
                 const classCode = row.getAttribute('data-class');
                 row.style.display = classCode.includes(filter) ? '' : 'none';
             });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const isDark = localStorage.getItem('theme') === 'dark';
+            const body = document.body;
+            const toggleBtn = document.getElementById('themeToggle');
+
+            if (isDark) body.classList.add('dark-mode');
+
+            const updateIcon = () => {
+                if (toggleBtn) {
+                    toggleBtn.textContent = body.classList.contains('dark-mode') ? '☀️' : '🌙';
+                }
+            };
+
+            updateIcon();
+
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function () {
+                    body.classList.toggle('dark-mode');
+                    const theme = body.classList.contains('dark-mode') ? 'dark' : 'light';
+                    localStorage.setItem('theme', theme);
+                    updateIcon();
+                });
+            }
         });
     </script>
 @endsection

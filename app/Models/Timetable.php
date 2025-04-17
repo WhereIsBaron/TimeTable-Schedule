@@ -18,4 +18,3 @@ class Timetable extends Model
         'end_time',
     ];
 }
-
