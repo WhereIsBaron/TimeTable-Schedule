@@ -9,7 +9,7 @@ This is a **solo coding project** – part of my personal learning and portfolio
 ## 🚀 Tech Stack
 
 - **Backend:** Laravel
-- **Frontend:** React (with Tailwind + Bootstrap for UI)
+- **Frontend:** PHP (with React & Tailwind + Bootstrap for UI)
 - **Database:** MySQL
 - **Auth:** Laravel Breeze / Sanctum
 - **UI Mode:** Light/Dark toggle system
