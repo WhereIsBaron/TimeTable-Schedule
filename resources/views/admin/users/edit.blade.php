@@ -73,14 +73,15 @@
 
             @auth
                 @if(Auth::user()->is_admin)
-                    <div class="mb-3">
-                        <label for="is_admin" class="form-label">Role</label>
-                        <select name="is_admin" id="is_admin" class="form-select @error('is_admin') is-invalid @enderror" required>
-                            <option value="0" {{ !$user->is_admin ? 'selected' : '' }}>Student</option>
-                            <option value="1" {{ $user->is_admin ? 'selected' : '' }}>Admin</option>
-                        </select>
-                        @error('is_admin') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                    </div>
+                <div class="mb-3">
+                    <label for="role" class="form-label">Role</label>
+                    <select name="role" id="role" class="form-select @error('role') is-invalid @enderror" required>
+                        <option value="student" {{ !$user->is_admin && !$user->is_faculty_admin ? 'selected' : '' }}>Student</option>
+                        <option value="faculty" {{ $user->is_faculty_admin ? 'selected' : '' }}>Faculty Admin</option>
+                        <option value="admin" {{ $user->is_admin ? 'selected' : '' }}>Admin</option>
+                    </select>
+                    @error('role') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                </div>
                 @endif
             @endauth
 

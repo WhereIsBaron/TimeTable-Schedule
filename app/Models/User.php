@@ -17,7 +17,8 @@ class User extends Authenticatable
         'student_id',
         'class_code',
         'password',
-        'is_admin'
+        'is_admin',
+        'is_faculty_admin',
     ];
 
     protected $hidden = [

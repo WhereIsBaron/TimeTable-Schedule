@@ -36,9 +36,12 @@
         <h1>📅 Timetable Management</h1>
         <div class="d-flex gap-2">
             <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-primary">🏠 Back to Dashboard</a>
-            <a href="{{ route('admin.timetables.create') }}" class="btn btn-success">➕ Add Entry</a>
             <a href="{{ route('admin.timetables.export') }}" class="btn btn-outline-secondary">⬇️ Export CSV</a>
         </div>
+    </div>
+
+    <div class="d-flex mb-4">
+        <a href="{{ route('admin.timetables.create') }}" class="btn btn-success">➕ Add Entry</a>
     </div>
 
     @if(session('success'))

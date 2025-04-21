@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
+use App\Models\FacultyClassCode; // ✅ Add this line to resolve the error
 
 class MasterTimetable extends Model
 {

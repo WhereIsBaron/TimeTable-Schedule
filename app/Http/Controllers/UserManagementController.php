@@ -35,9 +35,13 @@ class UserManagementController extends Controller
             'email'        => 'required|email|unique:users,email',
             'student_id'   => 'nullable|string|max:50',
             'class_code'   => 'nullable|string|max:50',
-            'is_admin'     => 'required|boolean',
+            'role'         => 'required|in:admin,faculty,student',
             'password'     => 'required|string|min:6|confirmed',
         ]);
+
+        // Determine role flags
+        $validated['is_admin'] = $request->role === 'admin';
+        $validated['is_faculty_admin'] = $request->role === 'faculty';
 
         $validated['password'] = bcrypt($validated['password']);
 
@@ -61,8 +65,11 @@ class UserManagementController extends Controller
             'email'        => 'required|email|unique:users,email,' . $user->id,
             'student_id'   => 'nullable|string|max:50',
             'class_code'   => 'nullable|string|max:50',
-            'is_admin'     => 'required|boolean',
+            'role'         => 'required|in:admin,faculty,student',
         ]);
+
+        $validated['is_admin'] = $request->role === 'admin';
+        $validated['is_faculty_admin'] = $request->role === 'faculty';
 
         $user->update($validated);
 

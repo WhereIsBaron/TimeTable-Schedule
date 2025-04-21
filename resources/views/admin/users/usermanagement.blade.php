@@ -36,7 +36,6 @@
             vertical-align: middle;
         }
 
-        /* Ensure buttons do not change in dark mode */
         body.dark-mode .btn {
             background-color: unset;
             color: unset;
@@ -94,10 +93,11 @@
 
     <div class="mb-4">
         <div class="d-flex">
-            <input type="text" class="form-control filter-input mr-2" id="classFilter" placeholder="Filter by class code...">
-            <select class="form-control filter-input mr-2" id="roleFilter">
+            <input type="text" class="form-control filter-input me-2" id="classFilter" placeholder="Filter by class code...">
+            <select class="form-control filter-input me-2" id="roleFilter">
                 <option value="">Filter by role</option>
                 <option value="admin">Admin</option>
+                <option value="faculty admin">Faculty Admin</option>
                 <option value="student">Student</option>
             </select>
             <input type="text" class="form-control filter-input" id="emailFilter" placeholder="Filter by email...">
@@ -128,7 +128,9 @@
                                     <td>{{ $user->full_name }}</td>
                                     <td>{{ $user->email }}</td>
                                     <td>{{ $user->student_id }}</td>
-                                    <td>{{ $user->is_admin ? 'Admin' : 'Student' }}</td>
+                                    <td>
+                                        {{ $user->is_admin ? 'Admin' : ($user->is_faculty_admin ? 'Faculty Admin' : 'Student') }}
+                                    </td>
                                     <td>
                                         <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-sm btn-primary">Edit</a>
                                         <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="d-inline">
@@ -158,13 +160,20 @@
         });
 
         document.getElementById('roleFilter').addEventListener('change', function () {
-            const roleFilter = this.value.toLowerCase();
+            const roleFilter = this.value.toLowerCase().trim();
             document.querySelectorAll('.class-group').forEach(group => {
                 const users = group.querySelectorAll('tbody tr');
+                let hasVisibleUsers = false;
+                
                 users.forEach(user => {
-                    const role = user.cells[3].textContent.toLowerCase();
-                    user.style.display = role === roleFilter || roleFilter === '' ? '' : 'none';
+                    const role = user.cells[3].textContent.toLowerCase().trim();
+                    const isVisible = roleFilter === '' || role === roleFilter;
+                    user.style.display = isVisible ? '' : 'none';
+                    if (isVisible) hasVisibleUsers = true;
                 });
+                
+                // Hide the entire group if no users match the filter
+                group.style.display = hasVisibleUsers || roleFilter === '' ? '' : 'none';
             });
         });
 
@@ -179,30 +188,29 @@
             });
         });
 
+        document.addEventListener("DOMContentLoaded", function () {
+            const isDark = localStorage.getItem('theme') === 'dark';
+            const body = document.body;
+            const toggleBtn = document.getElementById('themeToggle');
 
-    document.addEventListener("DOMContentLoaded", function () {
-        const isDark = localStorage.getItem('theme') === 'dark';
-        const body = document.body;
-        const toggleBtn = document.getElementById('themeToggle');
+            if (isDark) body.classList.add('dark-mode');
 
-        if (isDark) body.classList.add('dark-mode');
+            const updateIcon = () => {
+                if (toggleBtn) {
+                    toggleBtn.textContent = body.classList.contains('dark-mode') ? '☀️' : '🌙';
+                }
+            };
 
-        const updateIcon = () => {
+            updateIcon();
+
             if (toggleBtn) {
-                toggleBtn.textContent = body.classList.contains('dark-mode') ? '☀️' : '🌙';
+                toggleBtn.addEventListener('click', function () {
+                    body.classList.toggle('dark-mode');
+                    const theme = body.classList.contains('dark-mode') ? 'dark' : 'light';
+                    localStorage.setItem('theme', theme);
+                    updateIcon();
+                });
             }
-        };
-
-        updateIcon(); // Set icon on load
-
-        if (toggleBtn) {
-            toggleBtn.addEventListener('click', function () {
-                body.classList.toggle('dark-mode');
-                const theme = body.classList.contains('dark-mode') ? 'dark' : 'light';
-                localStorage.setItem('theme', theme);
-                updateIcon(); // Update icon after toggle
-            });
-        }
-    });
+        });
     </script>
 @endsection

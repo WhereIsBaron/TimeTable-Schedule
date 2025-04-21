@@ -56,23 +56,24 @@
 
             <div class="mb-3">
                 <label for="student_id" class="form-label">Student ID</label>
-                <input type="text" class="form-control @error('student_id') is-invalid @enderror" id="student_id" name="student_id" value="{{ old('student_id') }}" required>
+                <input type="text" class="form-control @error('student_id') is-invalid @enderror" id="student_id" name="student_id" value="{{ old('student_id') }}">
                 @error('student_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
             </div>
 
             <div class="mb-3">
                 <label for="class_code" class="form-label">Class Code</label>
-                <input type="text" class="form-control @error('class_code') is-invalid @enderror" id="class_code" name="class_code" value="{{ old('class_code') }}" required>
+                <input type="text" class="form-control @error('class_code') is-invalid @enderror" id="class_code" name="class_code" value="{{ old('class_code') }}">
                 @error('class_code') <div class="invalid-feedback">{{ $message }}</div> @enderror
             </div>
 
             <div class="mb-3">
-                <label for="is_admin" class="form-label">Role</label>
-                <select name="is_admin" id="is_admin" class="form-select @error('is_admin') is-invalid @enderror" required>
-                    <option value="0" {{ old('is_admin') == '0' ? 'selected' : '' }}>Student</option>
-                    <option value="1" {{ old('is_admin') == '1' ? 'selected' : '' }}>Admin</option>
+                <label for="role" class="form-label">Role</label>
+                <select name="role" id="role" class="form-select @error('role') is-invalid @enderror" required>
+                    <option value="student" {{ old('role') === 'student' ? 'selected' : '' }}>Student</option>
+                    <option value="faculty" {{ old('role') === 'faculty' ? 'selected' : '' }}>Faculty Admin</option>
+                    <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin</option>
                 </select>
-                @error('is_admin') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                @error('role') <div class="invalid-feedback">{{ $message }}</div> @enderror
             </div>
 
             <div class="mb-3">
@@ -94,7 +95,7 @@
                 <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">Cancel</a>
             </div>
         </div>
-    </form><br><br>
+    </form>
 @endsection
 
 @section('scripts')
@@ -117,14 +118,14 @@
                 }
             };
 
-            updateIcon(); // Set icon on load
+            updateIcon();
 
             if (toggleBtn) {
                 toggleBtn.addEventListener('click', function () {
                     body.classList.toggle('dark-mode');
                     const theme = body.classList.contains('dark-mode') ? 'dark' : 'light';
                     localStorage.setItem('theme', theme);
-                    updateIcon(); // Update icon after toggle
+                    updateIcon();
                 });
             }
         });

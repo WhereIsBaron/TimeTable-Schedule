@@ -16,7 +16,7 @@ class MasterTimetableController extends Controller
     public function index()
     {
         $masterTimetables = MasterTimetable::with('faculty')->orderBy('title')->paginate(10);
-        return view('admin.master_timetables.index', compact('masterTimetables'));
+        return view('admin.master_timetables.MasterTimtables', compact('masterTimetables'));
     }
 
     /**

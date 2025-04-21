@@ -55,21 +55,36 @@
         .theme-toggle-btn:hover {
             opacity: 0.85;
         }
+
+        /* --- ADD THIS FOR TABLES IN DARK MODE --- */
+        .dark-mode .table,
+        .dark-mode .table th,
+        .dark-mode .table td {
+            background-color: #23272b !important;
+            color: #e0e0e0 !important;
+        }
+
+        .dark-mode .table thead,
+        .dark-mode .table-light th {
+            background-color: #2c2c2c !important;
+            color: #e0e0e0 !important;
+        }
     </style>
 
     @yield('styles')
+    @stack('styles') <!-- ✅ Added for Select2 & other optional styles -->
 </head>
 <body>
-    
+
 <!-- Global Dark Mode Toggle Button -->
 <button id="themeToggle" class="theme-toggle-btn"></button>
-
 
     <div class="container mt-4">
         @yield('content')
     </div>
 
     @yield('scripts')
+    @stack('scripts') <!-- ✅ Added for Select2 & other optional scripts -->
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -77,7 +92,6 @@
             const toggleBtn = document.getElementById('themeToggle');
             const iconSpan = document.getElementById('themeIcon');
 
-            // Apply stored theme on load
             const isDark = localStorage.getItem('theme') === 'dark';
             if (isDark) {
                 body.classList.add('dark-mode');
@@ -86,7 +100,6 @@
                 iconSpan.textContent = '🌙';
             }
 
-            // Toggle theme on click
             toggleBtn.addEventListener('click', function () {
                 body.classList.toggle('dark-mode');
                 const isNowDark = body.classList.contains('dark-mode');

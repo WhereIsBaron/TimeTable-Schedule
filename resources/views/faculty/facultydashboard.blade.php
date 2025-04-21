@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Dashboard')
+@section('title', 'Faculty Dashboard')
 
 @section('styles')
     <style>
@@ -71,7 +71,7 @@
 @endsection
 
 @section('content')
-    <h1 class="mb-4">Admin Dashboard</h1>
+    <h1 class="mb-4">🎓 Faculty Admin Dashboard</h1>
 
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
@@ -80,13 +80,12 @@
     <div class="card shadow mb-4">
         <div class="card-body">
             <h5>Welcome, {{ auth()->user()->full_name }}</h5>
-            <p>You are logged in as an <strong>Administrator</strong>.</p>
+            <p>You are logged in as a <strong>Faculty Admin</strong>.</p>
 
             <div class="mt-3 d-flex gap-2 flex-wrap">
-                <a href="{{ route('admin.users.index') }}" class="btn btn-primary">👥 Manage Users</a>
-                <a href="{{ route('admin.timetables.index') }}" class="btn btn-primary">📅 Manage Schedule</a>
-                <a href="{{ route('admin.master_timetables.index') }}" class="btn btn-primary">📘 Master Timetables</a>
-                <a href="{{ route('admin.class_codes.index') }}" class="btn btn-primary">🏷️ Manage Class Codes</a>
+                {{-- Add route links as features get implemented --}}
+                <a href="#" class="btn btn-primary disabled">📘 View Master Timetable</a>
+                <a href="#" class="btn btn-primary disabled">👥 Manage Assigned Students</a>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="btn btn-danger">Logout</button>
@@ -96,32 +95,24 @@
     </div>
 
     <div class="dashboard-cards">
-        <!-- Room Summary Card (moved to first position and with icon) -->
         <div class="card shadow-sm">
             <div class="card-body">
-                <h6 class="card-title text-muted">🏢 Room Summary</h6>
-                <p class="mb-1"><strong>Total Rooms:</strong> {{ \App\Models\Room::count() }}</p>
-                <p><strong>Available:</strong> {{ \App\Models\Room::where('is_available', true)->count() }}</p>
-            </div>
-        </div>
-
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h6 class="card-title text-muted">System Summary</h6>
-                <p class="mb-1"><strong>Users:</strong> {{ \App\Models\User::count() }}</p>
-                <p><strong>Admins:</strong> {{ \App\Models\User::where('is_admin', true)->count() }}</p>
+                <h6 class="card-title text-muted">Quick Info</h6>
+                <p><strong>Class Codes:</strong> [to be loaded dynamically]</p>
+                <p><strong>Students:</strong> [linked to assigned codes]</p>
             </div>
         </div>
 
         <div class="card shadow-sm">
             <div class="card-body">
                 <h6 class="card-title text-muted">Recent Activity</h6>
-                <p class="mb-1">📌 Feature rollout on {{ now()->subDays(1)->format('M d, Y') }}</p>
-                <p class="mb-0">🗂️ Updated layout system</p>
+                <p class="mb-1">📝 No activity yet. Coming soon!</p>
             </div>
         </div>
     </div>
+@endsection
 
+@section('scripts')
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const isDark = localStorage.getItem('theme') === 'dark';

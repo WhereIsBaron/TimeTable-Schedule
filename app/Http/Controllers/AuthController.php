@@ -15,11 +15,11 @@ class AuthController extends Controller
     {
         // Validate the request data
         $validator = Validator::make($request->all(), [
-            'full_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'student_id' => 'required|string|unique:users',
-            'class_code' => 'required|string',
-            'password' => 'required|string|min:6|confirmed',
+            'full_name'    => 'required|string|max:255',
+            'email'        => 'required|string|email|max:255|unique:users',
+            'student_id'   => 'required|string|unique:users',
+            'class_code'   => 'required|string',
+            'password'     => 'required|string|min:6|confirmed',
         ]);
 
         // If validation fails, return errors
@@ -29,15 +29,15 @@ class AuthController extends Controller
 
         // Create the new user
         $user = User::create([
-            'full_name' => $request->full_name,
-            'email' => $request->email,
-            'student_id' => $request->student_id,
-            'class_code' => $request->class_code,
-            'password' => Hash::make($request->password),
-            'is_admin' => false,  // Default to non-admin
+            'full_name'        => $request->full_name,
+            'email'            => $request->email,
+            'student_id'       => $request->student_id,
+            'class_code'       => $request->class_code,
+            'password'         => Hash::make($request->password),
+            'is_admin'         => false,
+            'is_faculty_admin' => false,
         ]);
 
-        // Redirect to login page with a success message
         return redirect()->route('login')->with('success', 'Registration successful! Please login.');
     }
 
@@ -46,19 +46,23 @@ class AuthController extends Controller
     {
         // Validate login credentials
         $credentials = $request->validate([
-            'email' => 'required|string|email',
+            'email'    => 'required|string|email',
             'password' => 'required|string|min:6',
         ]);
 
-        // Attempt to log the user in using the 'web' guard
+        // Attempt to log in using the 'web' guard
         if (Auth::guard('web')->attempt($credentials)) {
-            // Get the authenticated user
             $user = Auth::user();
 
             // Redirect based on the user role
-            return redirect()->to($user->is_admin ? '/admin/dashboard' : '/user/dashboard')->with('success', 'Login successful!');
+            if ($user->is_admin) {
+                return redirect()->route('admin.dashboard')->with('success', 'Login successful!');
+            } elseif ($user->is_faculty_admin) {
+                return redirect()->route('faculty.dashboard')->with('success', 'Login successful!');
+            } else {
+                return redirect()->route('user.dashboard')->with('success', 'Login successful!');
+            }
         } else {
-            // If login fails, return back with an error message
             return back()->withErrors(['email' => 'Invalid credentials'])->withInput();
         }
     }
@@ -67,8 +71,6 @@ class AuthController extends Controller
     public function logout()
     {
         Auth::logout();
-
-        // Redirect to login page with a success message
         return redirect('/login')->with('success', 'Logged out successfully.');
     }
 }

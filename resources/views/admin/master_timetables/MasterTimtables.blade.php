@@ -3,7 +3,10 @@
 @section('title', 'Master Timetables')
 
 @section('content')
-    <h1 class="mb-4">📘 Master Timetables</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">📘 Master Timetables</h1>
+        <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-primary">🏠 Dashboard</a>
+    </div>
 
     <a href="{{ route('admin.master_timetables.create') }}" class="btn btn-success mb-3">➕ Add Master Timetable</a>
 
@@ -44,4 +47,33 @@
             </table>
         </div>
     </div>
+@endsection
+
+@section('scripts')
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const isDark = localStorage.getItem('theme') === 'dark';
+            const body = document.body;
+            const toggleBtn = document.getElementById('themeToggle');
+
+            if (isDark) body.classList.add('dark-mode');
+
+            const updateIcon = () => {
+                if (toggleBtn) {
+                    toggleBtn.textContent = body.classList.contains('dark-mode') ? '☀️' : '🌙';
+                }
+            };
+
+            updateIcon();
+
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function () {
+                    body.classList.toggle('dark-mode');
+                    const theme = body.classList.contains('dark-mode') ? 'dark' : 'light';
+                    localStorage.setItem('theme', theme);
+                    updateIcon();
+                });
+            }
+        });
+    </script>
 @endsection
